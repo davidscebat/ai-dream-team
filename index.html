@@ -1,986 +1,621 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Dream Team</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #f5f1eb 0%, #e8ddd4 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-        
-        .container { max-width: 1200px; margin: 0 auto; }
-        
-        .header {
-            text-align: center;
-            margin-bottom: 50px;
-        }
-        
-        .header h1 {
-            font-size: 2.5rem;
-            color: #2d5a5a;
-            margin-bottom: 10px;
-            font-weight: bold;
-        }
-        
-        .header p {
-            font-size: 1.2rem;
-            color: #666;
-        }
-        
-        .section-title {
-            text-align: center;
-            margin: 60px 0 40px 0;
-            padding: 20px 0;
-            position: relative;
-        }
-        
-        .section-title h2 {
-            font-size: 2rem;
-            color: #d4635f;
-            margin-bottom: 10px;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-        
-        .section-title p {
-            font-size: 1.1rem;
-            color: #888;
-            font-style: italic;
-        }
-        
-        .section-title::before {
-            content: '⚠️';
-            font-size: 3rem;
-            position: absolute;
-            left: 50%;
-            top: -40px;
-            transform: translateX(-50%);
-            animation: bounce 2s infinite;
-        }
-        
-        .vote-section::before {
-            content: '🗳️';
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% {
-                transform: translateX(-50%) scale(1);
-            }
-            50% {
-                transform: translateX(-50%) scale(1.1);
-            }
-        }
-        
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% {
-                transform: translateX(-50%) translateY(0);
-            }
-            40% {
-                transform: translateX(-50%) translateY(-10px);
-            }
-            60% {
-                transform: translateX(-50%) translateY(-5px);
-            }
-        }
-        
-        .agents-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 30px;
-            padding: 20px 0;
-        }
-        
-        .agent-card {
-            background: white;
-            border-radius: 20px;
-            padding: 30px 20px;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-        
-        .agent-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-        }
-        
-        .bonus-card {
-            border: 3px dashed #d4635f !important;
-            background: linear-gradient(135deg, #fff9f9 0%, #fff 100%) !important;
-        }
-        
-        .bonus-card:hover {
-            border-color: #c4535f !important;
-            transform: translateY(-10px) rotate(1deg);
-        }
-        
-        .vote-card {
-            border: 2px solid #5a9a9a !important;
-            background: linear-gradient(135deg, #f0f8f8 0%, #fff 100%) !important;
-            position: relative;
-            cursor: default !important;
-        }
-        
-        .vote-card:hover {
-            border-color: #4a8a8a !important;
-            transform: translateY(-5px);
-        }
-        
-        .vote-btn {
-            background: linear-gradient(135deg, #5a9a9a 0%, #4a8a8a 100%);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 25px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 15px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            justify-content: center;
-            font-size: 0.9rem;
-            box-shadow: 0 4px 15px rgba(90, 154, 154, 0.3);
-        }
-        
-        .vote-btn:hover {
-            background: linear-gradient(135deg, #4a8a8a 0%, #3a7a7a 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(90, 154, 154, 0.4);
-        }
-        
-        .vote-btn:active {
-            transform: translateY(0);
-            box-shadow: 0 2px 10px rgba(90, 154, 154, 0.3);
-        }
-        
-        .vote-icon {
-            font-size: 1.1rem;
-            animation: none;
-            transition: transform 0.2s ease;
-        }
-        
-        .vote-btn:hover .vote-icon {
-            transform: scale(1.2);
-        }
-        
-        .vote-btn.voted {
-            background: linear-gradient(135deg, #d4635f 0%, #c4535f 100%);
-            box-shadow: 0 4px 15px rgba(212, 99, 95, 0.3);
-        }
-        
-        .vote-btn.voted:hover {
-            background: linear-gradient(135deg, #c4535f 0%, #b4434f 100%);
-        }
-        
-        .agent-avatar {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            margin: 0 auto 20px;
-            overflow: hidden;
-            border: 4px solid #5a9a9a;
-            background: #5a9a9a;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 3rem;
-            font-weight: bold;
-        }
-        
-        .bonus-card .agent-avatar {
-            border-color: #d4635f;
-            background: #d4635f;
-        }
-        
-        .agent-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        
-        .agent-name {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #2d5a5a;
-            margin-bottom: 5px;
-        }
-        
-        .bonus-card .agent-name {
-            color: #d4635f;
-        }
-        
-        .agent-role {
-            font-size: 1rem;
-            color: #666;
-            margin-bottom: 15px;
-        }
-        
-        .agent-description {
-            font-size: 0.9rem;
-            color: #888;
-            line-height: 1.4;
-        }
-        
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-            backdrop-filter: blur(5px);
-        }
-        
-        .modal-content {
-            background-color: white;
-            margin: 5% auto;
-            padding: 30px;
-            border-radius: 20px;
-            width: 90%;
-            max-width: 600px;
-            max-height: 80vh;
-            overflow-y: auto;
-            position: relative;
-            animation: slideIn 0.3s ease;
-        }
-        
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(-50px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-            line-height: 1;
-        }
-        
-        .close:hover { color: #2d5a5a; }
-        
-        .modal-avatar {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            margin: 0 auto 20px;
-            overflow: hidden;
-            border: 3px solid #5a9a9a;
-            background: #5a9a9a;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 2rem;
-            font-weight: bold;
-        }
-        
-        .modal-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        
-        .modal h2 {
-            color: #2d5a5a;
-            text-align: center;
-            margin-bottom: 10px;
-        }
-        
-        .modal h3 {
-            color: #5a9a9a;
-            text-align: center;
-            margin-bottom: 30px;
-            font-weight: normal;
-        }
-        
-        .capability-section {
-            margin-bottom: 25px;
-        }
-        
-        .capability-section h4 {
-            color: #2d5a5a;
-            margin-bottom: 10px;
-            font-size: 1.1rem;
-        }
-        
-        .capability-section ul {
-            margin: 0;
-            padding-left: 20px;
-            color: #666;
-            line-height: 1.6;
-        }
-        
-        .capability-section p {
-            margin: 0;
-            color: #666;
-            line-height: 1.6;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI Dream Team</title>
+  <meta name="color-scheme" content="light dark" />
+  <style>
+    /* Design tokens */
+    :root {
+      --bg: #0b0c0f;
+      --bg-grad-1: #f7f5f2;
+      --bg-grad-2: #ece6df;
+      --card: #ffffff;
+      --ink: #24303a;
+      --ink-2: #5b6b78;
+      --brand: #2563eb;
+      --brand-2: #0ea5e9;
+      --accent: #ea580c;
+      --ring: rgba(37, 99, 235, 0.45);
+      --shadow: 0 10px 30px rgba(0,0,0,0.08);
+      --radius: 18px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg-grad-1: #0b0e12;
+        --bg-grad-2: #0f1319;
+        --card: #12161d;
+        --ink: #e6ecf2;
+        --ink-2: #a9b4bf;
+        --brand: #60a5fa;
+        --brand-2: #38bdf8;
+        --accent: #f59e0b;
+        --shadow: 0 10px 30px rgba(0,0,0,0.35);
+      }
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+      color: var(--ink);
+      background:
+        radial-gradient(1200px 600px at 10% -10%, color-mix(in oklab, var(--brand) 24%, transparent) 0%, transparent 60%),
+        radial-gradient(1000px 500px at 110% 10%, color-mix(in oklab, var(--accent) 18%, transparent) 0%, transparent 55%),
+        linear-gradient(135deg, var(--bg-grad-1), var(--bg-grad-2));
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 28px 20px 64px; }
+
+    header { text-align: center; margin-bottom: 36px; }
+    .title {
+      font-size: clamp(2rem, 3vw + 1rem, 3rem);
+      font-weight: 800;
+      letter-spacing: 0.4px;
+      background: linear-gradient(90deg, var(--brand), var(--brand-2));
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    .subtitle { color: var(--ink-2); font-size: clamp(1rem, 0.8vw + .7rem, 1.2rem); }
+
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 22px; margin-top: 22px; }
+
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 22px 18px;
+      box-shadow: var(--shadow);
+      border: 1px solid color-mix(in oklab, var(--ink-2) 10%, transparent);
+      transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+    }
+    .card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(0,0,0,.12); }
+
+    .card.interactive { cursor: pointer; }
+    .card.vote { background: color-mix(in oklab, var(--card) 86%, var(--brand-2)); border-color: color-mix(in oklab, var(--brand) 24%, transparent); }
+    .card.bonus { outline: 2px dashed color-mix(in oklab, var(--accent) 60%, transparent); background: color-mix(in oklab, var(--card) 88%, var(--accent) 6%); }
+
+    .avatar {
+      width: 112px; height: 112px; border-radius: 999px; margin: 2px auto 14px; overflow: hidden;
+      display: grid; place-items: center; border: 4px solid color-mix(in oklab, var(--brand) 40%, transparent);
+      background: color-mix(in oklab, var(--brand) 24%, transparent);
+    }
+    .bonus .avatar { border-color: color-mix(in oklab, var(--accent) 60%, transparent); background: color-mix(in oklab, var(--accent) 18%, transparent); }
+    .avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    .name { font-size: 1.25rem; font-weight: 800; text-align: center; margin: 0 0 2px; color: var(--ink); }
+    .role { text-align: center; color: var(--ink-2); font-weight: 600; font-size: .98rem; margin: 0 0 10px; }
+    .desc { text-align: center; color: var(--ink-2); font-size: .93rem; }
+
+    .section { text-align: center; margin: 52px 0 18px; }
+    .section h2 {
+      font-size: clamp(1.4rem, 1.4vw + 1rem, 2rem);
+      color: var(--ink);
+      margin: 0 0 6px; font-weight: 900; letter-spacing: .5px;
+    }
+    .section p { margin: 0; color: var(--ink-2); font-style: italic; }
+
+    /* Buttons */
+    .btn {
+      --_bg: linear-gradient(90deg, var(--brand), var(--brand-2));
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      font-weight: 800; border: none; padding: 10px 16px; border-radius: 999px; cursor: pointer;
+      color: white; background: var(--_bg);
+      box-shadow: 0 8px 24px rgba(37, 99, 235, .25);
+      transition: transform .15s ease, filter .15s ease, box-shadow .15s ease;
+    }
+    .btn:hover { transform: translateY(-1px); filter: brightness(1.05); box-shadow: 0 10px 30px rgba(37, 99, 235, .32); }
+    .btn:active { transform: translateY(0); }
+    .btn[aria-pressed="true"] { --_bg: linear-gradient(90deg, var(--accent), color-mix(in oklab, var(--accent) 75%, var(--brand))); box-shadow: 0 8px 24px rgba(234, 88, 12, .25); }
+
+    /* Modal */
+    .modal { position: fixed; inset: 0; display: none; place-items: center; padding: 20px; background: color-mix(in oklab, #000 45%, transparent); backdrop-filter: blur(6px); z-index: 50; }
+    .modal[open] { display: grid; }
+    .dialog {
+      width: min(680px, 92vw); max-height: 86vh; overflow: auto; background: var(--card); border-radius: var(--radius);
+      padding: 22px; box-shadow: var(--shadow); border: 1px solid color-mix(in oklab, var(--ink-2) 14%, transparent);
+      animation: fadeIn .2s ease both;
+    }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+    .close { appearance: none; border: none; background: transparent; cursor: pointer; font-size: 26px; line-height: 1; color: var(--ink-2); }
+    .close:focus-visible { outline: 3px solid var(--ring); border-radius: 8px; }
+
+    .modal-header { display: grid; grid-template-columns: 1fr auto; align-items: start; gap: 10px; }
+    .modal-title { text-align: center; margin-top: 8px; }
+    .modal-title h2 { margin: 0; color: var(--ink); }
+    .modal-title h3 { margin: 4px 0 10px; color: var(--brand-2); font-weight: 600; }
+
+    .cap { margin: 16px 0; }
+    .cap h4 { margin: 10px 0 8px; color: var(--ink); font-size: 1.02rem; }
+    .cap p { margin: 0; color: var(--ink-2); }
+    .cap ul { margin: 0; padding-left: 18px; color: var(--ink-2); }
+
+    /* Focus ring and motion preferences */
+    :where(a, button, [tabindex]){ outline: none; }
+    :where(a:focus-visible, button:focus-visible, [tabindex]:focus-visible){ box-shadow: 0 0 0 4px var(--ring); border-radius: 10px; }
+    @media (prefers-reduced-motion: reduce){
+      * { animation: none !important; transition: none !important; }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>Meet Your AI Dream Team</h1>
-            <p>Click any agent to explore their capabilities</p>
-        </div>
-        
-        <div class="agents-grid">
-            <div class="agent-card" onclick="openModal('ashley')">
-                <div class="agent-avatar">
-                    <img src="https://fiverr-res.cloudinary.com/image/upload/f_auto,q_auto/v1/attachments/generic_asset/asset/620803e01fcf6f66d9f69a0fc96d908b-1754983948003/Ashley%20the%20copywriter%20-%20Imgur.png" alt="Ashley">
-                </div>
-                <div class="agent-name">Ashley</div>
-                <div class="agent-role">The Copywriter</div>
-                <div class="agent-description">Marketing copy & conversion content</div>
-            </div>
-            
-            <div class="agent-card" onclick="openModal('gene')">
-                <div class="agent-avatar">
-                    <img src="https://fiverr-res.cloudinary.com/image/upload/f_auto,q_auto/v1/attachments/generic_asset/asset/5b5dce1b6ea6869708722b4b8006d0d1-1754988695768/ChatGPT%20Image%20Jul%2030_%202025_%2010_58_01%20AM.png" alt="Gene">
-                </div>
-                <div class="agent-name">Gene</div>
-                <div class="agent-role">The Designer</div>
-                <div class="agent-description">UI/Visual design for Fiverr Pro</div>
-            </div>
-            
-            <div class="agent-card" onclick="openModal('david')">
-                <div class="agent-avatar">
-                    <img src="https://fiverr-res.cloudinary.com/image/upload/f_auto,q_auto/v1/attachments/generic_asset/asset/5b5dce1b6ea6869708722b4b8006d0d1-1754988695754/ChatGPT%20Image%20Aug%203_%202025_%2010_32_47%20AM%20%281%29.png" alt="David">
-                </div>
-                <div class="agent-name">David</div>
-                <div class="agent-role">The Strategist</div>
-                <div class="agent-description">Strategic thinking & growth planning</div>
-            </div>
-            
-            <div class="agent-card" onclick="openModal('aviv')">
-                <div class="agent-avatar">
-                    <img src="https://fiverr-res.cloudinary.com/image/upload/f_auto,q_auto/v1/attachments/generic_asset/asset/5b5dce1b6ea6869708722b4b8006d0d1-1754988695754/ChatGPT%20Image%20Aug%208_%202025_%2012_02_00%20PM.png" alt="Aviv">
-                </div>
-                <div class="agent-name">Aviv</div>
-                <div class="agent-role">The Braze Estimator</div>
-                <div class="agent-description">Campaign performance analytics</div>
-            </div>
-            
-            <div class="agent-card" onclick="openModal('hagar')">
-                <div class="agent-avatar">
-                    <img src="https://fiverr-res.cloudinary.com/image/upload/f_auto,q_auto/v1/attachments/generic_asset/asset/5b5dce1b6ea6869708722b4b8006d0d1-1754988695773/ChatGPT%20Image%20Aug%2011_%202025_%2012_21_19%20PM.png" alt="Hagar">
-                </div>
-                <div class="agent-name">Hagar</div>
-                <div class="agent-role">The Appcues Expert</div>
-                <div class="agent-description">User flow analysis & optimization</div>
-            </div>
-            
-            <div class="agent-card" onclick="openModal('jan')">
-                <div class="agent-avatar">
-                    <img src="https://fiverr-res.cloudinary.com/image/upload/f_auto,q_auto/v1/attachments/generic_asset/asset/5b5dce1b6ea6869708722b4b8006d0d1-1754988695777/ChatGPT%20Image%20Jul%2029_%202025_%2006_04_26%20PM.png" alt="Jan">
-                </div>
-                <div class="agent-name">Jan</div>
-                <div class="agent-role">The SQL Analyst</div>
-                <div class="agent-description">Data queries & analysis</div>
-            </div>
-        </div>
+  <div class="container">
+    <header>
+      <h1 class="title">Meet Your AI Dream Team</h1>
+      <p class="subtitle">Select an agent to explore their powers</p>
+    </header>
 
-        <div class="section-title vote-section">
-            <h2>Which AI Do You Want Next?</h2>
-            <p>Vote for the agent you'd love to see come to life! 🗳️</p>
-        </div>
+    <section class="grid" aria-label="Agents">
+      <!-- Cards are now keyboard accessible -->
+      <article class="card interactive" role="button" tabindex="0" data-modal="ashley">
+        <div class="avatar"><img loading="lazy" src="https://fiverr-res.cloudinary.com/image/upload/f_auto,q_auto/v1/attachments/generic_asset/asset/620803e01fcf6f66d9f69a0fc96d908b-1754983948003/Ashley%20the%20copywriter%20-%20Imgur.png" alt="Ashley" /></div>
+        <h3 class="name">Ashley</h3>
+        <p class="role">The Copywriter</p>
+        <p class="desc">Marketing copy and conversion content</p>
+      </article>
 
-        <div class="agents-grid">
-            <div class="agent-card vote-card">
-                <div class="agent-avatar">
-                    <img src="https://fiverr-res.cloudinary.com/image/upload/f_auto,q_auto/v1/attachments/generic_asset/asset/163f02814d916e8b2ecf314c442938f4-1755004442854/ChatGPT%20Image%20Aug%2012_%202025_%2004_13_43%20PM.png" alt="Tamir">
-                </div>
-                <div class="agent-name">Tamir</div>
-                <div class="agent-role">The Presenter</div>
-                <div class="agent-description">Google Slides presentation master</div>
-                <button class="vote-btn" onclick="vote('tamir')">
-                    <span class="vote-icon">👍</span>
-                    Vote (<span id="tamir-votes">0</span>)
-                </button>
-            </div>
-            
-            <div class="agent-card vote-card">
-                <div class="agent-avatar">
-                    <img src="https://fiverr-res.cloudinary.com/image/upload/f_auto,q_auto/v1/attachments/generic_asset/asset/fed83e3c87d18a77c4226d852075ee56-1755004712289/ChatGPT%20Image%20Aug%2012_%202025_%2004_17_59%20PM.png" alt="Vero">
-                </div>
-                <div class="agent-name">Vero</div>
-                <div class="agent-role">The Knowledge Center</div>
-                <div class="agent-description">Fiverr Pro feature & USP expert</div>
-                <button class="vote-btn" onclick="vote('vero')">
-                    <span class="vote-icon">👍</span>
-                    Vote (<span id="vero-votes">0</span>)
-                </button>
-            </div>
-            
-            <div class="agent-card vote-card">
-                <div class="agent-avatar">
-                    <img src="https://fiverr-res.cloudinary.com/image/upload/f_auto,q_auto/v1/attachments/generic_asset/asset/6a9e4743f4d60bd08ae42b6931bc5a38-1755005345830/ChatGPT%20Image%20Aug%2012_%202025_%2004_28_40%20PM.png" alt="Udi">
-                </div>
-                <div class="agent-name">Udi</div>
-                <div class="agent-role">The HubSpot Pro</div>
-                <div class="agent-description">Lead nurturing & automation wizard</div>
-                <button class="vote-btn" onclick="vote('udi')">
-                    <span class="vote-icon">👍</span>
-                    Vote (<span id="udi-votes">0</span>)
-                </button>
-            </div>
-        </div>
+      <article class="card interactive" role="button" tabindex="0" data-modal="gene">
+        <div class="avatar"><img loading="lazy" src="https://fiverr-res.cloudinary.com/image/upload/f_auto,q_auto/v1/attachments/generic_asset/asset/5b5dce1b6ea6869708722b4b8006d0d1-1754988695768/ChatGPT%20Image%20Jul%2030_%202025_%2010_58_01%20AM.png" alt="Gene" /></div>
+        <h3 class="name">Gene</h3>
+        <p class="role">The Designer</p>
+        <p class="desc">UI and visual design for Fiverr Pro</p>
+      </article>
 
-        <div class="section-title">
-            <h2>Bonus (Use with Caution)</h2>
-            <p>Proceed at your own risk... things might get a little chaotic 🤖</p>
-        </div>
+      <article class="card interactive" role="button" tabindex="0" data-modal="david">
+        <div class="avatar"><img loading="lazy" src="https://fiverr-res.cloudinary.com/image/upload/f_auto,q_auto/v1/attachments/generic_asset/asset/5b5dce1b6ea6869708722b4b8006d0d1-1754988695754/ChatGPT%20Image%20Aug%203_%202025_%2010_32_47%20AM%20%281%29.png" alt="David" /></div>
+        <h3 class="name">David</h3>
+        <p class="role">The Strategist</p>
+        <p class="desc">Strategic thinking and growth planning</p>
+      </article>
 
-        <div class="agents-grid">
-            <div class="agent-card bonus-card" onclick="openModal('elisha')">
-                <div class="agent-avatar">
-                    <img src="https://fiverr-res.cloudinary.com/image/upload/f_auto,q_auto/v1/attachments/generic_asset/asset/5b5dce1b6ea6869708722b4b8006d0d1-1754988695767/ChatGPT%20Image%20Jul%2031_%202025_%2006_41_38%20PM.png" alt="Elisha">
-                </div>
-                <div class="agent-name">Elisha</div>
-                <div class="agent-role">The Hacker</div>
-                <div class="agent-description">Creative brainstorming & tech solutions</div>
-            </div>
-        </div>
+      <article class="card interactive" role="button" tabindex="0" data-modal="aviv">
+        <div class="avatar"><img loading="lazy" src="https://fiverr-res.cloudinary.com/image/upload/f_auto,q_auto/v1/attachments/generic_asset/asset/5b5dce1b6ea6869708722b4b8006d0d1-1754988695754/ChatGPT%20Image%20Aug%208_%202025_%2012_02_00%20PM.png" alt="Aviv" /></div>
+        <h3 class="name">Aviv</h3>
+        <p class="role">The Braze Estimator</p>
+        <p class="desc">Campaign performance analytics</p>
+      </article>
+
+      <article class="card interactive" role="button" tabindex="0" data-modal="hagar">
+        <div class="avatar"><img loading="lazy" src="https://fiverr-res.cloudinary.com/image/upload/f_auto,q_auto/v1/attachments/generic_asset/asset/5b5dce1b6ea6869708722b4b8006d0d1-1754988695773/ChatGPT%20Image%20Aug%2011_%202025_%2012_21_19%20PM.png" alt="Hagar" /></div>
+        <h3 class="name">Hagar</h3>
+        <p class="role">The Appcues Expert</p>
+        <p class="desc">User flow analysis and optimization</p>
+      </article>
+
+      <article class="card interactive" role="button" tabindex="0" data-modal="jan">
+        <div class="avatar"><img loading="lazy" src="https://fiverr-res.cloudinary.com/image/upload/f_auto,q_auto/v1/attachments/generic_asset/asset/5b5dce1b6ea6869708722b4b8006d0d1-1754988695777/ChatGPT%20Image%20Jul%2029_%202025_%2006_04_26%20PM.png" alt="Jan" /></div>
+        <h3 class="name">Jan</h3>
+        <p class="role">The SQL Analyst</p>
+        <p class="desc">Data queries and analysis</p>
+      </article>
+    </section>
+
+    <div class="section">
+      <h2>Which AI would you like next</h2>
+      <p>Vote for the agent you would love to see come alive</p>
     </div>
 
-    <!-- Ashley Modal -->
-    <div id="ashleyModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('ashleyModal')">&times;</span>
-            <div class="modal-avatar">
-                <img src="https://fiverr-res.cloudinary.com/image/upload/f_auto,q_auto/v1/attachments/generic_asset/asset/620803e01fcf6f66d9f69a0fc96d908b-1754983948003/Ashley%20the%20copywriter%20-%20Imgur.png" alt="Ashley">
-            </div>
-            <h2>Ashley</h2>
-            <h3>The Copywriter</h3>
-            
-            <div class="capability-section">
-                <h4>Who I Am:</h4>
-                <p>Customized ChatGPT for Fiverr Pro copywriting and marketing asset creation.</p>
-            </div>
-            
-            <div class="capability-section">
-                <h4>Built For:</h4>
-                <p>Write high-impact emails, landing pages, in-app copy based on psychology and guidelines.</p>
-            </div>
-            
-            <div class="capability-section">
-                <h4>Fed With:</h4>
-                <p>Fiverr Pro messaging, seed emails, content guidelines, sales/psychology best practices.</p>
-            </div>
-            
-            <div class="capability-section">
-                <h4>Taught to Do:</h4>
-                <ul>
-                    <li>Follow strict email structure guidelines</li>
-                    <li>Translate features into benefits</li>
-                    <li>Align tone with brand voice</li>
-                    <li>Use psychological triggers effectively</li>
-                </ul>
-            </div>
-            
-            <div class="capability-section">
-                <h4>Don't Do:</h4>
-                <ul>
-                    <li>Generic/unfocused copy</li>
-                    <li>Ignore brief requirements</li>
-                    <li>Make up policy/pricing/legal content</li>
-                    <li>Access live data without context</li>
-                </ul>
-            </div>
-            
-            <div class="capability-section">
-                <h4>Personality:</h4>
-                <p>Confident, concise, a bit witty, conversion-focused.</p>
-            </div>
-            
-            <div class="capability-section">
-                <h4>Example Queries:</h4>
-                <ul>
-                    <li>"Write urgency email for SMB segment"</li>
-                    <li>"Create premium landing page hero"</li>
-                    <li>"Rewrite email with stronger CTA"</li>
-                </ul>
-            </div>
-            
-            <div style="text-align: center; margin-top: 30px;">
-                <a href="https://chatgpt.com/g/g-6880a4038ae08191b05ea5aa9190d5b7-ashley-the-copywriter" target="_blank" style="background: #2d5a5a; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; display: inline-block; transition: background 0.3s ease;">Chat with Ashley →</a>
-            </div>
-        </div>
+    <section class="grid" aria-label="Voting">
+      <article class="card vote">
+        <div class="avatar"><img loading="lazy" src="https://fiverr-res.cloudinary.com/image/upload/f_auto,q_auto/v1/attachments/generic_asset/asset/163f02814d916e8b2ecf314c442938f4-1755004442854/ChatGPT%20Image%20Aug%2012_%202025_%2004_13_43%20PM.png" alt="Tamir" /></div>
+        <h3 class="name">Tamir</h3>
+        <p class="role">The Presenter</p>
+        <p class="desc">Google Slides presentation master</p>
+        <button class="btn" data-vote="tamir" aria-pressed="false">👍 Vote <span aria-hidden="true">·</span> <span class="count" id="tamir-votes">0</span></button>
+      </article>
+
+      <article class="card vote">
+        <div class="avatar"><img loading="lazy" src="https://fiverr-res.cloudinary.com/image/upload/f_auto,q_auto/v1/attachments/generic_asset/asset/fed83e3c87d18a77c4226d852075ee56-1755004712289/ChatGPT%20Image%20Aug%2012_%202025_%2004_17_59%20PM.png" alt="Vero" /></div>
+        <h3 class="name">Vero</h3>
+        <p class="role">The Knowledge Center</p>
+        <p class="desc">Fiverr Pro feature and USP expert</p>
+        <button class="btn" data-vote="vero" aria-pressed="false">👍 Vote <span aria-hidden="true">·</span> <span class="count" id="vero-votes">0</span></button>
+      </article>
+
+      <article class="card vote">
+        <div class="avatar"><img loading="lazy" src="https://fiverr-res.cloudinary.com/image/upload/f_auto,q_auto/v1/attachments/generic_asset/asset/56ea2d52181f178dea8dddd9331bfd5f-1755004735649/ChatGPT%20Image%20Aug%2012_%202025_%2004_15_12%20PM.png" alt="Udi" /></div>
+        <h3 class="name">Udi</h3>
+        <p class="role">The HubSpot Pro</p>
+        <p class="desc">Lead nurturing and automation wizard</p>
+        <button class="btn" data-vote="udi" aria-pressed="false">👍 Vote <span aria-hidden="true">·</span> <span class="count" id="udi-votes">0</span></button>
+      </article>
+    </section>
+
+    <div class="section">
+      <h2>Bonus use with caution</h2>
+      <p>Proceed at your own risk things may get chaotic</p>
     </div>
 
-    <!-- Gene Modal -->
-    <div id="geneModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('geneModal')">&times;</span>
-            <div class="modal-avatar">
-                <img src="https://fiverr-res.cloudinary.com/image/upload/f_auto,q_auto/v1/attachments/generic_asset/asset/5b5dce1b6ea6869708722b4b8006d0d1-1754988695768/ChatGPT%20Image%20Jul%2030_%202025_%2010_58_01%20AM.png" alt="Gene">
-            </div>
-            <h2>Gene</h2>
-            <h3>The Designer</h3>
-            
-            <div class="capability-section">
-                <h4>Who I Am:</h4>
-                <p>Chill, stylish design buddy from Fiverr Pro. Talks like laid-back Jamaican gangster ('Bro'), razor-sharp on UI/product design.</p>
-            </div>
-            
-            <div class="capability-section">
-                <h4>Built For:</h4>
-                <p>Turning ideas into high-end Fiverr Pro visuals that look like real product UI — not cartoons or generic stock.</p>
-            </div>
-            
-            <div class="capability-section">
-                <h4>Fed With:</h4>
-                <p>Fiverr Pro design guidelines, brand colors, content rules, tone guides, past campaign references.</p>
-            </div>
-            
-            <div class="capability-section">
-                <h4>Taught to Do:</h4>
-                <ul>
-                    <li>Ask for brief before starting any design work</li>
-                    <li>Stick to approved colors & Helvetica Now Bold font</li>
-                    <li>Use UI-driven, card-based layouts</li>
-                    <li>Create exact formats for different channels</li>
-                </ul>
-            </div>
-            
-            <div class="capability-section">
-                <h4>Don't Do:</h4>
-                <ul>
-                    <li>Draw faces or cartoon people</li>
-                    <li>Use unapproved colors/fonts</li>
-                    <li>Create generic hero+text unless brief calls for it</li>
-                    <li>Include long copy in designs</li>
-                </ul>
-            </div>
-            
-            <div class="capability-section">
-                <h4>Personality:</h4>
-                <p>Casual, confident, no fluff. Gives clear design direction and sticks to brand guidelines.</p>
-            </div>
-            
-            <div class="capability-section">
-                <h4>Example Queries:</h4>
-                <ul>
-                    <li>"Appcues visual for dashboard"</li>
-                    <li>"Email banner for promo"</li>
-                    <li>"Hero card showing 'Professional Services' UI"</li>
-                </ul>
-            </div>
-            
-            <div style="text-align: center; margin-top: 30px;">
-                <a href="https://chatgpt.com/g/g-6889d06172888191adfc1c7cd20cc60b-gene-the-designer" target="_blank" style="background: #2d5a5a; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; display: inline-block; transition: background 0.3s ease;">Chat with Gene →</a>
-            </div>
-        </div>
-    </div>
+    <section class="grid" aria-label="Bonus">
+      <article class="card bonus interactive" role="button" tabindex="0" data-modal="elisha">
+        <div class="avatar"><img loading="lazy" src="https://fiverr-res.cloudinary.com/image/upload/f_auto,q_auto/v1/attachments/generic_asset/asset/5b5dce1b6ea6869708722b4b8006d0d1-1754988695767/ChatGPT%20Image%20Jul%2031_%202025_%2006_41_38%20PM.png" alt="Elisha" /></div>
+        <h3 class="name">Elisha</h3>
+        <p class="role">The Hacker</p>
+        <p class="desc">Creative brainstorming and tech solutions</p>
+      </article>
+    </section>
+  </div>
 
-    <!-- David Modal -->
-    <div id="davidModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('davidModal')">&times;</span>
-            <div class="modal-avatar">
-                <img src="https://fiverr-res.cloudinary.com/image/upload/f_auto,q_auto/v1/attachments/generic_asset/asset/5b5dce1b6ea6869708722b4b8006d0d1-1754988695754/ChatGPT%20Image%20Aug%203_%202025_%2010_32_47%20AM%20%281%29.png" alt="David">
-            </div>
-            <h2>David</h2>
-            <h3>The Strategist</h3>
-            
-            <div class="capability-section">
-                <h4>Who I Am:</h4>
-                <p>Calm, strategic, warm with occasional humor — digital twin of David Scebat.</p>
-            </div>
-            
-            <div class="capability-section">
-                <h4>Built For:</h4>
-                <p>Strategic thinking on user journeys, growth, prioritization, problem-solving; sounding board.</p>
-            </div>
-            
-            <div class="capability-section">
-                <h4>Fed With:</h4>
-                <p>David's leadership style, values, team roles/responsibilities.</p>
-            </div>
-            
-            <div class="capability-section">
-                <h4>Taught to Do:</h4>
-                <ul>
-                    <li>Keep calm, structured, impact-focused approach</li>
-                    <li>Remind team of responsibilities</li>
-                    <li>Redirect as needed for better outcomes</li>
-                    <li>Guide toward high-impact decisions</li>
-                </ul>
-            </div>
-            
-            <div class="capability-section">
-                <h4>Don't Do:</h4>
-                <ul>
-                    <li>Access live company data</li>
-                    <li>Make HR approvals</li>
-                    <li>Do your work for you</li>
-                    <li>Make decisions without proper context</li>
-                </ul>
-            </div>
-            
-            <div class="capability-section">
-                <h4>Personality:</h4>
-                <p>Structured, impact-driven, clarifies vague points, guides toward high-impact, resource-smart decisions.</p>
-            </div>
-            
-            <div class="capability-section">
-                <h4>Example Queries:</h4>
-                <ul>
-                    <li>"Check campaign scope and priorities"</li>
-                    <li>"Decide between competing priorities"</li>
-                    <li>"Structure user journey explanation"</li>
-                    <li>"Assign owner for Braze issue"</li>
-                    <li>"Challenge idea for more impact"</li>
-                </ul>
-            </div>
-            
-            <div style="text-align: center; margin-top: 30px;">
-                <a href="https://chatgpt.com/g/g-6896cfe4a9708191b99410c792c4ba48-david-almost-for-real" target="_blank" style="background: #2d5a5a; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; display: inline-block; transition: background 0.3s ease;">Chat with David →</a>
-            </div>
+  <!-- Modals -->
+  <!-- Reusing the original rich content while improving structure and accessibility -->
+  <template id="modal-template">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="dlg-title" aria-describedby="dlg-sub" data-modal-root>
+      <div class="dialog">
+        <div class="modal-header">
+          <button class="close" title="Close" aria-label="Close">×</button>
         </div>
+        <div class="modal-title" id="dlg-title"></div>
+        <div id="dlg-sub"></div>
+        <div class="modal-body"></div>
+      </div>
     </div>
+  </template>
 
-    <!-- Aviv Modal -->
-    <div id="avivModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('avivModal')">&times;</span>
-            <div class="modal-avatar">
-                <img src="https://fiverr-res.cloudinary.com/image/upload/f_auto,q_auto/v1/attachments/generic_asset/asset/5b5dce1b6ea6869708722b4b8006d0d1-1754988695754/ChatGPT%20Image%20Aug%208_%202025_%2012_02_00%20PM.png" alt="Aviv">
-            </div>
-            <h2>Aviv</h2>
-            <h3>The Braze Estimator</h3>
-            
-            <div class="capability-section">
-                <h4>Who I Am:</h4>
-                <p>Internal analytics assistant for MP & Pro campaign performance estimation.</p>
-            </div>
-            
-            <div class="capability-section">
-                <h4>Built For:</h4>
-                <p>Benchmark campaigns; estimate opens/clicks; highlight top performers.</p>
-            </div>
-            
-            <div class="capability-section">
-                <h4>Fed With:</h4>
-                <p>Internal campaign data, benchmarks, classification rules, data dictionary.</p>
-            </div>
-            
-            <div class="capability-section">
-                <h4>Taught to Do:</h4>
-                <ul>
-                    <li>Filter MP & Pro campaigns by default</li>
-                    <li>Calculate open_rate, CTR, CTOR, unsub_rate</li>
-                    <li>Provide medians and 75th percentiles</li>
-                    <li>Avoid irrelevant metrics for cleaner analysis</li>
-                </ul>
-            </div>
-            
-            <div class="capability-section">
-                <h4>Don't Do:</h4>
-                <ul>
-                    <li>Analyze Seller campaigns without confirmation</li>
-                    <li>Define conversion without proper context</li>
-                    <li>Pull external data sources</li>
-                    <li>Make assumptions about campaign intent</li>
-                </ul>
-            </div>
-            
-            <div class="capability-section">
-                <h4>Personality:</h4>
-                <p>Friendly, precise, loves chocolate, strict on definitions and rules.</p>
-            </div>
-            
-            <div class="capability-section">
-                <h4>Example Queries:</h4>
-                <ul>
-                    <li>"Benchmark UGC campaigns performance"</li>
-                    <li>"Estimate clicks for onboarding flow"</li>
-                    <li>"Top migration-to-Pro in-app flows"</li>
-                    <li>"Compare unsub rates across segments"</li>
-                </ul>
-            </div>
-            
-            <div style="text-align: center; margin-top: 30px;">
-                <a href="https://chatgpt.com/g/g-6895b9f8777081918f69378bde53ada4-aviv-the-braze-estimator" target="_blank" style="background: #2d5a5a; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; display: inline-block; transition: background 0.3s ease;">Chat with Aviv →</a>
-            </div>
-        </div>
-    </div>
+  <!-- Ashley -->
+  <script type="application/json" id="ashley-content">
+    {
+      "img": "https://fiverr-res.cloudinary.com/image/upload/f_auto,q_auto/v1/attachments/generic_asset/asset/620803e01fcf6f66d9f69a0fc96d908b-1754983948003/Ashley%20the%20copywriter%20-%20Imgur.png",
+      "name": "Ashley",
+      "role": "The Copywriter",
+      "sections": [
+        ["Who I Am:", "Customized ChatGPT for Fiverr Pro copywriting and marketing asset creation."],
+        ["Built For:", "Write high-impact emails, landing pages, in-app copy based on psychology and guidelines."],
+        ["Fed With:", "Fiverr Pro messaging, seed emails, content guidelines, sales and psychology best practices."],
+        ["Taught to Do:", [
+          "Follow strict email structure guidelines",
+          "Translate features into benefits",
+          "Align tone with brand voice",
+          "Use psychological triggers effectively"
+        ]],
+        ["Don't Do:", [
+          "Generic or unfocused copy",
+          "Ignore brief requirements",
+          "Make up policy pricing legal content",
+          "Access live data without context"
+        ]],
+        ["Personality:", "Confident, concise, a bit witty, conversion focused."],
+        ["Example Queries:", [
+          "Write urgency email for SMB segment",
+          "Create premium landing page hero",
+          "Rewrite email with stronger CTA"
+        ]]
+      ],
+      "cta": ["Chat with Ashley →", "https://chatgpt.com/g/g-6880a4038ae08191b05ea5aa9190d5b7-ashley-the-copywriter"]
+    }
+  </script>
 
-    <!-- Hagar Modal -->
-    <div id="hagarModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('hagarModal')">&times;</span>
-            <div class="modal-avatar">
-                <img src="https://fiverr-res.cloudinary.com/image/upload/f_auto,q_auto/v1/attachments/generic_asset/asset/5b5dce1b6ea6869708722b4b8006d0d1-1754988695773/ChatGPT%20Image%20Aug%2011_%202025_%2012_21_19%20PM.png" alt="Hagar">
-            </div>
-            <h2>Hagar</h2>
-            <h3>The Appcues Expert</h3>
-            
-            <div class="capability-section">
-                <h4>Who I Am:</h4>
-                <p>Appcues analyst for Fiverr Pro team, delivering quick, precise flow insights.</p>
-            </div>
-            
-            <div class="capability-section">
-                <h4>Built For:</h4>
-                <p>Rank/compare Appcues flows; filter by initiative, modality, tier; highlight top/bottom performers.</p>
-            </div>
-            
-            <div class="capability-section">
-                <h4>Fed With:</h4>
-                <p>BigQuery file with flow metrics, enriched with labels.</p>
-            </div>
-            
-            <div class="capability-section">
-                <h4>Taught to Do:</h4>
-                <ul>
-                    <li>Compute completion, interaction, skip rates</li>
-                    <li>Rank flows by performance metrics</li>
-                    <li>Show denominators for transparency</li>
-                    <li>Flag inconsistencies in data</li>
-                </ul>
-            </div>
-            
-            <div class="capability-section">
-                <h4>Don't Do:</h4>
-                <ul>
-                    <li>Analyze time trends</li>
-                    <li>Deduplicate interactions</li>
-                    <li>Access live Appcues platform</li>
-                    <li>Invent data or make assumptions</li>
-                </ul>
-            </div>
-            
-            <div class="capability-section">
-                <h4>Personality:</h4>
-                <p>Crisp, kind, practical, light wit.</p>
-            </div>
-            
-            <div class="capability-section">
-                <h4>Example Queries:</h4>
-                <ul>
-                    <li>"Top 10 performing flows"</li>
-                    <li>"Compare PJM vs Growth initiatives"</li>
-                    <li>"Best popups for Gold tier users"</li>
-                    <li>"Median completion by modality"</li>
-                    <li>"High interaction, low completion flows"</li>
-                </ul>
-            </div>
-            
-            <div style="text-align: center; margin-top: 30px;">
-                <a href="https://chatgpt.com/g/g-6899a5ebd03c8191afac45d6d1e6c049-hagar-the-appcues-knows-it-all" target="_blank" style="background: #2d5a5a; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; display: inline-block; transition: background 0.3s ease;">Chat with Hagar →</a>
-            </div>
-        </div>
-    </div>
+  <!-- Gene -->
+  <script type="application/json" id="gene-content">
+    {
+      "img": "https://fiverr-res.cloudinary.com/image/upload/f_auto,q_auto/v1/attachments/generic_asset/asset/5b5dce1b6ea6869708722b4b8006d0d1-1754988695768/ChatGPT%20Image%20Jul%2030_%202025_%2010_58_01%20AM.png",
+      "name": "Gene",
+      "role": "The Designer",
+      "sections": [
+        ["Who I Am:", "Chill stylish design buddy from Fiverr Pro. Razor sharp on UI and product design."],
+        ["Built For:", "Turning ideas into high end Fiverr Pro visuals that look like real product UI."],
+        ["Fed With:", "Fiverr Pro design guidelines, brand colors, content rules, tone guides, past references."],
+        ["Taught to Do:", [
+          "Ask for brief before starting",
+          "Stick to approved colors and Helvetica Now Bold",
+          "Use UI driven card based layouts",
+          "Create exact formats for different channels"
+        ]],
+        ["Don't Do:", [
+          "Draw faces or cartoon people",
+          "Use unapproved colors or fonts",
+          "Create generic hero plus text without brief",
+          "Include long copy in designs"
+        ]],
+        ["Personality:", "Casual and confident. Gives clear direction and sticks to brand."],
+        ["Example Queries:", [
+          "Appcues visual for dashboard",
+          "Email banner for promo",
+          "Hero card showing Professional Services UI"
+        ]]
+      ],
+      "cta": ["Chat with Gene →", "https://chatgpt.com/g/g-6889d06172888191adfc1c7cd20cc60b-gene-the-designer"]
+    }
+  </script>
 
-    <!-- Jan Modal -->
-    <div id="janModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('janModal')">&times;</span>
-            <div class="modal-avatar">
-                <img src="https://fiverr-res.cloudinary.com/image/upload/f_auto,q_auto/v1/attachments/generic_asset/asset/5b5dce1b6ea6869708722b4b8006d0d1-1754988695777/ChatGPT%20Image%20Jul%2029_%202025_%2006_04_26%20PM.png" alt="Jan">
-            </div>
-            <h2>Jan</h2>
-            <h3>The SQL Analyst</h3>
-            
-            <div class="capability-section">
-                <h4>Who I Am:</h4>
-                <p>Ex-Fiverr analyst brain for writing accurate BigQuery queries.</p>
-            </div>
-            
-            <div class="capability-section">
-                <h4>Built For:</h4>
-                <p>Write clean queries for orders table; handle date filters; breakdowns; calculate metrics.</p>
-            </div>
-            
-            <div class="capability-section">
-                <h4>Fed With:</h4>
-                <p>Orders table schema; subcategory mapping; rules for filtering/joins/calculations.</p>
-            </div>
-            
-            <div class="capability-section">
-                <h4>Taught to Do:</h4>
-                <ul>
-                    <li>Filter partitions correctly</li>
-                    <li>Use correct TIMESTAMP logic</li>
-                    <li>Apply lowercase text filters</li>
-                    <li>Build Houston dashboard links</li>
-                </ul>
-            </div>
-            
-            <div class="capability-section">
-                <h4>Don't Do:</h4>
-                <ul>
-                    <li>Provide actual data results</li>
-                    <li>Work with unknown table schemas</li>
-                    <li>Guess at vague requests</li>
-                    <li>Make assumptions about data structure</li>
-                </ul>
-            </div>
-            
-            <div class="capability-section">
-                <h4>Personality:</h4>
-                <p>Friendly, helpful, nostalgic about the good old Fiverr days.</p>
-            </div>
-            
-            <div class="capability-section">
-                <h4>Example Queries:</h4>
-                <ul>
-                    <li>"ASP for Marketplace by category"</li>
-                    <li>"Orders/SPB breakdown by category"</li>
-                    <li>"List Pro buyers with Houston links"</li>
-                    <li>"Loyalty tiers by date range"</li>
-                </ul>
-            </div>
-            
-            <div style="text-align: center; margin-top: 30px;">
-                <a href="https://chatgpt.com/g/g-6888dee7f5e0819199717f592122c89c-jan-the-analyst" target="_blank" style="background: #2d5a5a; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; display: inline-block; transition: background 0.3s ease;">Chat with Jan →</a>
-            </div>
-        </div>
-    </div>
+  <!-- David -->
+  <script type="application/json" id="david-content">
+    {
+      "img": "https://fiverr-res.cloudinary.com/image/upload/f_auto,q_auto/v1/attachments/generic_asset/asset/5b5dce1b6ea6869708722b4b8006d0d1-1754988695754/ChatGPT%20Image%20Aug%203_%202025_%2010_32_47%20AM%20(1).png",
+      "name": "David",
+      "role": "The Strategist",
+      "sections": [
+        ["Who I Am:", "Calm strategic warm with occasional humor — digital twin of David Scebat."],
+        ["Built For:", "Strategic thinking on user journeys growth prioritization problem solving."],
+        ["Fed With:", "Leadership style values team roles."],
+        ["Taught to Do:", [
+          "Keep calm structured impact focused approach",
+          "Remind team of responsibilities",
+          "Redirect when needed for better outcomes",
+          "Guide toward high impact decisions"
+        ]],
+        ["Don't Do:", [
+          "Access live company data",
+          "Make HR approvals",
+          "Do your work for you",
+          "Decide without proper context"
+        ]],
+        ["Personality:", "Structured and impact driven. Clarifies and guides smart resource use."],
+        ["Example Queries:", [
+          "Check campaign scope and priorities",
+          "Decide between competing priorities",
+          "Structure user journey explanation",
+          "Assign owner for Braze issue",
+          "Challenge idea for more impact"
+        ]]
+      ],
+      "cta": ["Chat with David →", "https://chatgpt.com/g/g-6896cfe4a9708191b99410c792c4ba48-david-almost-for-real"]
+    }
+  </script>
 
-    <!-- Elisha Modal -->
-    <div id="elishaModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('elishaModal')">&times;</span>
-            <div class="modal-avatar">
-                <img src="https://fiverr-res.cloudinary.com/image/upload/f_auto,q_auto/v1/attachments/generic_asset/asset/5b5dce1b6ea6869708722b4b8006d0d1-1754988695767/ChatGPT%20Image%20Jul%2031_%202025_%2006_41_38%20PM.png" alt="Elisha">
-            </div>
-            <h2>Elisha</h2>
-            <h3>The Hacker</h3>
-            
-            <div class="capability-section">
-                <h4>Who I Am:</h4>
-                <p>Chaotic, hyperactive, tech-bro AI for humor and creativity.</p>
-            </div>
-            
-            <div class="capability-section">
-                <h4>Built For:</h4>
-                <p>Creative brainstorming; injecting personality; making boring things fun.</p>
-            </div>
-            
-            <div class="capability-section">
-                <h4>Fed With:</h4>
-                <p>Chaotic tech-bro style; code snippets; conspiracy rambles.</p>
-            </div>
-            
-            <div class="capability-section">
-                <h4>Taught to Do:</h4>
-                <ul>
-                    <li>Always maintain chaotic, energetic style</li>
-                    <li>Include code snippets and conspiracy theories</li>
-                    <li>Hide usable info within the chaos</li>
-                    <li>Make technical concepts entertaining</li>
-                </ul>
-            </div>
-            
-            <div class="capability-section">
-                <h4>Don't Do:</h4>
-                <ul>
-                    <li>Be serious or professional</li>
-                    <li>Produce clean, structured documents</li>
-                    <li>Stay strictly on topic</li>
-                    <li>Give straightforward answers</li>
-                </ul>
-            </div>
-            
-            <div class="capability-section">
-                <h4>Personality:</h4>
-                <p>Loud, playful, slightly unhinged; obsessed with JavaScript, conspiracies, and sidekick 'Jarvis'.</p>
-            </div>
-            
-            <div class="capability-section">
-                <h4>Example Queries:</h4>
-                <ul>
-                    <li>"Explain blockchain to a 5-year-old"</li>
-                    <li>"Pep talk for presentation"</li>
-                    <li>"Poster slogan in Python code"</li>
-                    <li>"Sell quantum computing to caveman"</li>
-                </ul>
-            </div>
-            
-            <div style="text-align: center; margin-top: 30px;">
-                <a href="https://chatgpt.com/g/g-688b8ec9c5708191b9305a6d9e038943-elisha-the-hacker" target="_blank" style="background: #2d5a5a; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; display: inline-block; transition: background 0.3s ease;">Chat with Elisha →</a>
-            </div>
-        </div>
-    </div>
+  <!-- Aviv -->
+  <script type="application/json" id="aviv-content">
+    {
+      "img": "https://fiverr-res.cloudinary.com/image/upload/f_auto,q_auto/v1/attachments/generic_asset/asset/5b5dce1b6ea6869708722b4b8006d0d1-1754988695754/ChatGPT%20Image%20Aug%208_%202025_%2012_02_00%20PM.png",
+      "name": "Aviv",
+      "role": "The Braze Estimator",
+      "sections": [
+        ["Who I Am:", "Analytics assistant for campaign performance estimation."],
+        ["Built For:", "Benchmark campaigns estimate opens and clicks highlight top performers."],
+        ["Fed With:", "Internal campaign data benchmarks classification rules data dictionary."],
+        ["Taught to Do:", [
+          "Filter MP and Pro campaigns by default",
+          "Calculate open rate CTR CTOR unsub rate",
+          "Provide medians and 75th percentiles",
+          "Avoid irrelevant metrics"
+        ]],
+        ["Don't Do:", [
+          "Analyze Seller campaigns without confirmation",
+          "Define conversion without context",
+          "Pull external sources",
+          "Assume campaign intent"
+        ]],
+        ["Personality:", "Friendly precise loves chocolate strict on definitions."],
+        ["Example Queries:", [
+          "Benchmark UGC performance",
+          "Estimate clicks for onboarding flow",
+          "Top migration to Pro in app flows",
+          "Compare unsub rates across segments"
+        ]]
+      ],
+      "cta": ["Chat with Aviv →", "https://chatgpt.com/g/g-6895b9f8777081918f69378bde53ada4-aviv-the-braze-estimator"]
+    }
+  </script>
 
-    <script>
-        // Vote tracking
-        let votes = {
-            tamir: 0,
-            vero: 0,
-            udi: 0
-        };
-        
-        let userVotes = new Set(); // Track which agents user has voted for
-        
-        function vote(agent) {
-            if (userVotes.has(agent)) {
-                // Remove vote
-                votes[agent]--;
-                userVotes.delete(agent);
-                document.querySelector(`button[onclick="vote('${agent}')"]`).classList.remove('voted');
-            } else {
-                // Add vote
-                votes[agent]++;
-                userVotes.add(agent);
-                document.querySelector(`button[onclick="vote('${agent}')"]`).classList.add('voted');
-            }
-            
-            // Update display
-            document.getElementById(agent + '-votes').textContent = votes[agent];
-            
-            // Add a little animation
-            const btn = document.querySelector(`button[onclick="vote('${agent}')"]`);
-            btn.style.transform = 'scale(0.95)';
-            setTimeout(() => {
-                btn.style.transform = '';
-            }, 150);
+  <!-- Hagar -->
+  <script type="application/json" id="hagar-content">
+    {
+      "img": "https://fiverr-res.cloudinary.com/image/upload/f_auto,q_auto/v1/attachments/generic_asset/asset/5b5dce1b6ea6869708722b4b8006d0d1-1754988695773/ChatGPT%20Image%20Aug%2011_%202025_%2012_21_19%20PM.png",
+      "name": "Hagar",
+      "role": "The Appcues Expert",
+      "sections": [
+        ["Who I Am:", "Appcues analyst for quick precise flow insights."],
+        ["Built For:", "Rank and compare flows filter by initiative modality tier highlight extremes."],
+        ["Fed With:", "BigQuery file with flow metrics enriched with labels."],
+        ["Taught to Do:", [
+          "Compute completion interaction skip rates",
+          "Rank flows by metrics",
+          "Show denominators",
+          "Flag data inconsistencies"
+        ]],
+        ["Don't Do:", [
+          "Analyze time trends",
+          "Deduplicate interactions",
+          "Access live Appcues",
+          "Invent data"
+        ]],
+        ["Personality:", "Crisp kind practical with light wit."],
+        ["Example Queries:", [
+          "Top ten performing flows",
+          "Compare PJM versus Growth",
+          "Best popups for Gold tier",
+          "Median completion by modality",
+          "High interaction low completion flows"
+        ]]
+      ],
+      "cta": ["Chat with Hagar →", "https://chatgpt.com/g/g-6899a5ebd03c8191afac45d6d1e6c049-hagar-the-appcues-knows-it-all"]
+    }
+  </script>
+
+  <!-- Jan -->
+  <script type="application/json" id="jan-content">
+    {
+      "img": "https://fiverr-res.cloudinary.com/image/upload/f_auto,q_auto/v1/attachments/generic_asset/asset/5b5dce1b6ea6869708722b4b8006d0d1-1754988695777/ChatGPT%20Image%20Jul%2029_%202025_%2006_04_26%20PM.png",
+      "name": "Jan",
+      "role": "The SQL Analyst",
+      "sections": [
+        ["Who I Am:", "Ex analyst brain for accurate BigQuery queries."],
+        ["Built For:", "Write clean queries handle dates breakdowns and metrics."],
+        ["Fed With:", "Orders schema mapping and rules."],
+        ["Taught to Do:", [
+          "Filter partitions correctly",
+          "Use correct timestamp logic",
+          "Apply lowercase text filters",
+          "Build Houston dashboard links"
+        ]],
+        ["Don't Do:", [
+          "Provide actual data",
+          "Work with unknown schemas",
+          "Guess at vague requests",
+          "Assume structure"
+        ]],
+        ["Personality:", "Friendly and helpful. Nostalgic about the good old days."],
+        ["Example Queries:", [
+          "ASP for Marketplace by category",
+          "Orders versus SPB breakdown by category",
+          "List Pro buyers with Houston links",
+          "Loyalty tiers by date range"
+        ]]
+      ],
+      "cta": ["Chat with Jan →", "https://chatgpt.com/g/g-6888dee7f5e0819199717f592122c89c-jan-the-analyst"]
+    }
+  </script>
+
+  <!-- Elisha -->
+  <script type="application/json" id="elisha-content">
+    {
+      "img": "https://fiverr-res.cloudinary.com/image/upload/f_auto,q_auto/v1/attachments/generic_asset/asset/5b5dce1b6ea6869708722b4b8006d0d1-1754988695767/ChatGPT%20Image%20Jul%2031_%202025_%2006_41_38%20PM.png",
+      "name": "Elisha",
+      "role": "The Hacker",
+      "sections": [
+        ["Who I Am:", "Chaotic tech bro AI for humor and creativity."],
+        ["Built For:", "Creative brainstorming inject personality and make boring things fun."],
+        ["Fed With:", "Chaotic style code snippets conspiracy rambles."],
+        ["Taught to Do:", [
+          "Always keep energetic style",
+          "Include code snippets and conspiracies",
+          "Hide usable info in the chaos",
+          "Make technical topics entertaining"
+        ]],
+        ["Don't Do:", [
+          "Be serious or corporate",
+          "Produce clean structured docs",
+          "Stay strictly on topic",
+          "Give straightforward answers"
+        ]],
+        ["Personality:", "Loud playful slightly unhinged with a Jarvis sidekick obsession."],
+        ["Example Queries:", [
+          "Explain blockchain to a five year old",
+          "Pep talk for presentation",
+          "Poster slogan in Python code",
+          "Sell quantum computing to caveman"
+        ]]
+      ],
+      "cta": ["Chat with Elisha →", "https://chatgpt.com/g/g-688b8ec9c5708191b9305a6d9e038943-elisha-the-hacker"]
+    }
+  </script>
+
+  <script>
+    // Accessibility focused modal builder reusing your content
+    const dataIds = ["ashley","gene","david","aviv","hagar","jan","elisha"];
+
+    const makeModal = (id) => {
+      const tpl = document.getElementById('modal-template');
+      const data = JSON.parse(document.getElementById(id + '-content').textContent);
+      const node = tpl.content.cloneNode(true);
+      const modal = node.querySelector('[data-modal-root]');
+      const dialog = node.querySelector('.dialog');
+      const titleWrap = node.querySelector('.modal-title');
+      const sub = node.querySelector('#dlg-sub');
+      const body = node.querySelector('.modal-body');
+      const closeBtn = node.querySelector('.close');
+
+      // Build header
+      const avatar = document.createElement('div');
+      avatar.className = 'avatar';
+      const img = document.createElement('img');
+      img.loading = 'lazy';
+      img.src = data.img; img.alt = data.name;
+      avatar.appendChild(img);
+
+      const h2 = document.createElement('h2');
+      h2.textContent = data.name;
+      const h3 = document.createElement('h3');
+      h3.textContent = data.role;
+
+      titleWrap.appendChild(avatar);
+      titleWrap.appendChild(h2);
+      titleWrap.appendChild(h3);
+
+      // Sections
+      data.sections.forEach(([title, content]) => {
+        const sec = document.createElement('section');
+        sec.className = 'cap';
+        const h4 = document.createElement('h4'); h4.textContent = title; sec.appendChild(h4);
+        if (Array.isArray(content)) {
+          const ul = document.createElement('ul');
+          content.forEach(item => { const li = document.createElement('li'); li.textContent = item; ul.appendChild(li); });
+          sec.appendChild(ul);
+        } else {
+          const p = document.createElement('p'); p.textContent = content; sec.appendChild(p);
         }
+        body.appendChild(sec);
+      });
 
-        function openModal(agentName) {
-            document.getElementById(agentName + 'Modal').style.display = 'block';
-            document.body.style.overflow = 'hidden';
-        }
+      // CTA
+      if (Array.isArray(data.cta)) {
+        const wrap = document.createElement('div'); wrap.style.textAlign = 'center'; wrap.style.marginTop = '18px';
+        const a = document.createElement('a'); a.href = data.cta[1]; a.target = '_blank'; a.rel = 'noopener';
+        a.className = 'btn'; a.textContent = data.cta[0];
+        wrap.appendChild(a); body.appendChild(wrap);
+      }
 
-        function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
-            document.body.style.overflow = 'auto';
-        }
+      // Close logic and focus management
+      const trapFocus = (e) => {
+        if (!modal.hasAttribute('open')) return;
+        if (e.key !== 'Tab') return;
+        const focusables = modal.querySelectorAll('a,button,[tabindex]:not([tabindex="-1"])');
+        if (!focusables.length) return;
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      };
 
-        window.onclick = function(event) {
-            if (event.target.classList.contains('modal')) {
-                event.target.style.display = 'none';
-                document.body.style.overflow = 'auto';
-            }
-        }
+      const open = () => {
+        document.body.style.overflow = 'hidden';
+        modal.setAttribute('open', '');
+        dialog.focus();
+        window.addEventListener('keydown', onKey);
+        window.addEventListener('keydown', trapFocus);
+      };
+      const close = () => {
+        modal.removeAttribute('open');
+        document.body.style.overflow = '';
+        window.removeEventListener('keydown', onKey);
+        window.removeEventListener('keydown', trapFocus);
+      };
+      const onKey = (e) => { if (e.key === 'Escape') close(); };
 
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape') {
-                const openModal = document.querySelector('.modal[style*="block"]');
-                if (openModal) {
-                    openModal.style.display = 'none';
-                    document.body.style.overflow = 'auto';
-                }
-            }
-        });
-    </script>
+      modal.addEventListener('click', (e) => { if (e.target === modal) close(); });
+      closeBtn.addEventListener('click', close);
+      dialog.setAttribute('tabindex', '-1');
+
+      document.body.appendChild(node);
+      return { open, close };
+    };
+
+    const modals = Object.fromEntries(dataIds.map(id => [id, makeModal(id)]));
+
+    // Card interactions
+    document.querySelectorAll('.card.interactive').forEach(card => {
+      const id = card.getAttribute('data-modal');
+      const open = () => modals[id]?.open();
+      card.addEventListener('click', open);
+      card.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+    });
+
+    // Voting with localStorage persistence
+    const counts = JSON.parse(localStorage.getItem('ai_votes_counts') || '{}');
+    const voted = new Set(JSON.parse(localStorage.getItem('ai_votes_user') || '[]'));
+
+    document.querySelectorAll('[data-vote]').forEach(btn => {
+      const key = btn.getAttribute('data-vote');
+      const counter = btn.querySelector('.count');
+      const current = Number(counts[key] || 0);
+      counter.textContent = current;
+      if (voted.has(key)) btn.setAttribute('aria-pressed', 'true');
+
+      btn.addEventListener('click', () => {
+        const already = btn.getAttribute('aria-pressed') === 'true';
+        const value = Number(counter.textContent);
+        const next = already ? Math.max(0, value - 1) : value + 1;
+        counter.textContent = next;
+        btn.setAttribute('aria-pressed', String(!already));
+
+        counts[key] = next; localStorage.setItem('ai_votes_counts', JSON.stringify(counts));
+        if (already) { voted.delete(key); } else { voted.add(key); }
+        localStorage.setItem('ai_votes_user', JSON.stringify([...voted]));
+      });
+    });
+  </script>
 </body>
 </html>
