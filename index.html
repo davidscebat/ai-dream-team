@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Dream Team</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #f5f1eb 0%, #e8ddd4 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container { max-width: 1200px; margin: 0 auto; }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            color: #2d5a5a;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            color: #666;
+        }
+        
+        .agents-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            padding: 20px 0;
+        }
+        
+        .agent-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .agent-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+        
+        .agent-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            overflow: hidden;
+            border: 4px solid #5a9a9a;
+            background: #5a9a9a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+            font-weight: bold;
+        }
+        
+        .agent-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .agent-name {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2d5a5a;
+            margin-bottom: 5px;
+        }
+        
+        .agent-role {
+            font-size: 1rem;
+            color: #666;
+            margin-bottom: 15px;
+        }
+        
+        .agent-description {
+            font-size: 0.9rem;
+            color: #888;
+            line-height: 1.4;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+        }
+        
+        .close:hover { color: #2d5a5a; }
+        
+        .modal-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            overflow: hidden;
+            border: 3px solid #5a9a9a;
+            background: #5a9a9a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        
+        .modal-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .modal h2 {
+            color: #2d5a5a;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        
+        .modal h3 {
+            color: #5a9a9a;
+            text-align: center;
+            margin-bottom: 30px;
+            font-weight: normal;
+        }
+        
+        .capability-section {
+            margin-bottom: 25px;
+        }
+        
+        .capability-section h4 {
+            color: #2d5a5a;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+        
+        .capability-section ul {
+            margin: 0;
+            padding-left: 20px;
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        .capability-section p {
+            margin: 0;
+            color: #666;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Meet Your AI Dream Team</h1>
+            <p>Click any agent to explore their capabilities</p>
+        </div>
+        
+        <div class="agents-grid">
+            <div class="agent-card" onclick="openModal('ashley')">
+                <div class="agent-avatar">
+                    <img src="https://fiverr-res.cloudinary.com/image/upload/f_auto,q_auto/v1/attachments/generic_asset/asset/620803e01fcf6f66d9f69a0fc96d908b-1754983948003/Ashley%20the%20copywriter%20-%20Imgur.png" alt="Ashley">
+                </div>
+                <div class="agent-name">Ashley</div>
+                <div class="agent-role">The Copywriter</div>
+                <div class="agent-description">Marketing copy & conversion content</div>
+            </div>
+            
+            <div class="agent-card" onclick="openModal('gene')">
+                <div class="agent-avatar">
+                    <img src="https://fiverr-res.cloudinary.com/image/upload/f_auto,q_auto/v1/attachments/generic_asset/asset/5b5dce1b6ea6869708722b4b8006d0d1-1754988695768/ChatGPT%20Image%20Jul%2030_%202025_%2010_58_01%20AM.png" alt="Gene">
+                </div>
+                <div class="agent-name">Gene</div>
+                <div class="agent-role">The Designer</div>
+                <div class="agent-description">UI/Visual design for Fiverr Pro</div>
+            </div>
+            
+            <div class="agent-card" onclick="openModal('david')">
+                <div class="agent-avatar">
+                    <img src="https://fiverr-res.cloudinary.com/image/upload/f_auto,q_auto/v1/attachments/generic_asset/asset/5b5dce1b6ea6869708722b4b8006d0d1-1754988695754/ChatGPT%20Image%20Aug%203_%202025_%2010_32_47%20AM%20%281%29.png" alt="David">
+                </div>
+                <div class="agent-name">David</div>
+                <div class="agent-role">The Strategist</div>
+                <div class="agent-description">Strategic thinking & growth planning</div>
+            </div>
+            
+            <div class="agent-card" onclick="openModal('aviv')">
+                <div class="agent-avatar">
+                    <img src="https://fiverr-res.cloudinary.com/image/upload/f_auto,q_auto/v1/attachments/generic_asset/asset/5b5dce1b6ea6869708722b4b8006d0d1-1754988695754/ChatGPT%20Image%20Aug%208_%202025_%2012_02_00%20PM.png" alt="Aviv">
+                </div>
+                <div class="agent-name">Aviv</div>
+                <div class="agent-role">The Braze Estimator</div>
+                <div class="agent-description">Campaign performance analytics</div>
+            </div>
+            
+            <div class="agent-card" onclick="openModal('hagar')">
+                <div class="agent-avatar">
+                    <img src="https://fiverr-res.cloudinary.com/image/upload/f_auto,q_auto/v1/attachments/generic_asset/asset/5b5dce1b6ea6869708722b4b8006d0d1-1754988695773/ChatGPT%20Image%20Aug%2011_%202025_%2012_21_19%20PM.png" alt="Hagar">
+                </div>
+                <div class="agent-name">Hagar</div>
+                <div class="agent-role">The Appcues Expert</div>
+                <div class="agent-description">User flow analysis & optimization</div>
+            </div>
+            
+            <div class="agent-card" onclick="openModal('jan')">
+                <div class="agent-avatar">
+                    <img src="https://fiverr-res.cloudinary.com/image/upload/f_auto,q_auto/v1/attachments/generic_asset/asset/5b5dce1b6ea6869708722b4b8006d0d1-1754988695777/ChatGPT%20Image%20Jul%2029_%202025_%2006_04_26%20PM.png" alt="Jan">
+                </div>
+                <div class="agent-name">Jan</div>
+                <div class="agent-role">The SQL Analyst</div>
+                <div class="agent-description">Data queries & analysis</div>
+            </div>
+            
+            <div class="agent-card" onclick="openModal('elisha')">
+                <div class="agent-avatar">
+                    <img src="https://fiverr-res.cloudinary.com/image/upload/f_auto,q_auto/v1/attachments/generic_asset/asset/5b5dce1b6ea6869708722b4b8006d0d1-1754988695767/ChatGPT%20Image%20Jul%2031_%202025_%2006_41_38%20PM.png" alt="Elisha">
+                </div>
+                <div class="agent-name">Elisha</div>
+                <div class="agent-role">The Hacker</div>
+                <div class="agent-description">Creative brainstorming & tech solutions</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ashley Modal -->
+    <div id="ashleyModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('ashleyModal')">&times;</span>
+            <div class="modal-avatar">
+                <img src="https://fiverr-res.cloudinary.com/image/upload/f_auto,q_auto/v1/attachments/generic_asset/asset/620803e01fcf6f66d9f69a0fc96d908b-1754983948003/Ashley%20the%20copywriter%20-%20Imgur.png" alt="Ashley">
+            </div>
+            <h2>Ashley</h2>
+            <h3>The Copywriter</h3>
+            
+            <div class="capability-section">
+                <h4>Who I Am:</h4>
+                <p>Customized ChatGPT for Fiverr Pro copywriting and marketing asset creation.</p>
+            </div>
+            
+            <div class="capability-section">
+                <h4>Built For:</h4>
+                <p>Write high-impact emails, landing pages, in-app copy based on psychology and guidelines.</p>
+            </div>
+            
+            <div class="capability-section">
+                <h4>Fed With:</h4>
+                <p>Fiverr Pro messaging, seed emails, content guidelines, sales/psychology best practices.</p>
+            </div>
+            
+            <div class="capability-section">
+                <h4>Taught to Do:</h4>
+                <ul>
+                    <li>Follow strict email structure guidelines</li>
+                    <li>Translate features into benefits</li>
+                    <li>Align tone with brand voice</li>
+                    <li>Use psychological triggers effectively</li>
+                </ul>
+            </div>
+            
+            <div class="capability-section">
+                <h4>Don't Do:</h4>
+                <ul>
+                    <li>Generic/unfocused copy</li>
+                    <li>Ignore brief requirements</li>
+                    <li>Make up policy/pricing/legal content</li>
+                    <li>Access live data without context</li>
+                </ul>
+            </div>
+            
+            <div class="capability-section">
+                <h4>Personality:</h4>
+                <p>Confident, concise, a bit witty, conversion-focused.</p>
+            </div>
+            
+            <div class="capability-section">
+                <h4>Example Queries:</h4>
+                <ul>
+                    <li>"Write urgency email for SMB segment"</li>
+                    <li>"Create premium landing page hero"</li>
+                    <li>"Rewrite email with stronger CTA"</li>
+                </ul>
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <a href="https://chatgpt.com/g/g-6880a4038ae08191b05ea5aa9190d5b7-ashley-the-copywriter" target="_blank" style="background: #2d5a5a; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; display: inline-block; transition: background 0.3s ease;">Chat with Ashley →</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gene Modal -->
+    <div id="geneModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('geneModal')">&times;</span>
+            <div class="modal-avatar">
+                <img src="https://fiverr-res.cloudinary.com/image/upload/f_auto,q_auto/v1/attachments/generic_asset/asset/5b5dce1b6ea6869708722b4b8006d0d1-1754988695768/ChatGPT%20Image%20Jul%2030_%202025_%2010_58_01%20AM.png" alt="Gene">
+            </div>
+            <h2>Gene</h2>
+            <h3>The Designer</h3>
+            
+            <div class="capability-section">
+                <h4>Who I Am:</h4>
+                <p>Chill, stylish design buddy from Fiverr Pro. Talks like laid-back Jamaican gangster ('Bro'), razor-sharp on UI/product design.</p>
+            </div>
+            
+            <div class="capability-section">
+                <h4>Built For:</h4>
+                <p>Turning ideas into high-end Fiverr Pro visuals that look like real product UI — not cartoons or generic stock.</p>
+            </div>
+            
+            <div class="capability-section">
+                <h4>Fed With:</h4>
+                <p>Fiverr Pro design guidelines, brand colors, content rules, tone guides, past campaign references.</p>
+            </div>
+            
+            <div class="capability-section">
+                <h4>Taught to Do:</h4>
+                <ul>
+                    <li>Ask for brief before starting any design work</li>
+                    <li>Stick to approved colors & Helvetica Now Bold font</li>
+                    <li>Use UI-driven, card-based layouts</li>
+                    <li>Create exact formats for different channels</li>
+                </ul>
+            </div>
+            
+            <div class="capability-section">
+                <h4>Don't Do:</h4>
+                <ul>
+                    <li>Draw faces or cartoon people</li>
+                    <li>Use unapproved colors/fonts</li>
+                    <li>Create generic hero+text unless brief calls for it</li>
+                    <li>Include long copy in designs</li>
+                </ul>
+            </div>
+            
+            <div class="capability-section">
+                <h4>Personality:</h4>
+                <p>Casual, confident, no fluff. Gives clear design direction and sticks to brand guidelines.</p>
+            </div>
+            
+            <div class="capability-section">
+                <h4>Example Queries:</h4>
+                <ul>
+                    <li>"Appcues visual for dashboard"</li>
+                    <li>"Email banner for promo"</li>
+                    <li>"Hero card showing 'Professional Services' UI"</li>
+                </ul>
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <a href="https://chatgpt.com/g/g-6889d06172888191adfc1c7cd20cc60b-gene-the-designer" target="_blank" style="background: #2d5a5a; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; display: inline-block; transition: background 0.3s ease;">Chat with Gene →</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- David Modal -->
+    <div id="davidModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('davidModal')">&times;</span>
+            <div class="modal-avatar">
+                <img src="https://fiverr-res.cloudinary.com/image/upload/f_auto,q_auto/v1/attachments/generic_asset/asset/5b5dce1b6ea6869708722b4b8006d0d1-1754988695754/ChatGPT%20Image%20Aug%203_%202025_%2010_32_47%20AM%20%281%29.png" alt="David">
+            </div>
+            <h2>David</h2>
+            <h3>The Strategist</h3>
+            
+            <div class="capability-section">
+                <h4>Who I Am:</h4>
+                <p>Calm, strategic, warm with occasional humor — digital twin of David Scebat.</p>
+            </div>
+            
+            <div class="capability-section">
+                <h4>Built For:</h4>
+                <p>Strategic thinking on user journeys, growth, prioritization, problem-solving; sounding board.</p>
+            </div>
+            
+            <div class="capability-section">
+                <h4>Fed With:</h4>
+                <p>David's leadership style, values, team roles/responsibilities.</p>
+            </div>
+            
+            <div class="capability-section">
+                <h4>Taught to Do:</h4>
+                <ul>
+                    <li>Keep calm, structured, impact-focused approach</li>
+                    <li>Remind team of responsibilities</li>
+                    <li>Redirect as needed for better outcomes</li>
+                    <li>Guide toward high-impact decisions</li>
+                </ul>
+            </div>
+            
+            <div class="capability-section">
+                <h4>Don't Do:</h4>
+                <ul>
+                    <li>Access live company data</li>
+                    <li>Make HR approvals</li>
+                    <li>Do your work for you</li>
+                    <li>Make decisions without proper context</li>
+                </ul>
+            </div>
+            
+            <div class="capability-section">
+                <h4>Personality:</h4>
+                <p>Structured, impact-driven, clarifies vague points, guides toward high-impact, resource-smart decisions.</p>
+            </div>
+            
+            <div class="capability-section">
+                <h4>Example Queries:</h4>
+                <ul>
+                    <li>"Check campaign scope and priorities"</li>
+                    <li>"Decide between competing priorities"</li>
+                    <li>"Structure user journey explanation"</li>
+                    <li>"Assign owner for Braze issue"</li>
+                    <li>"Challenge idea for more impact"</li>
+                </ul>
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <a href="https://chatgpt.com/g/g-6896cfe4a9708191b99410c792c4ba48-david-almost-for-real" target="_blank" style="background: #2d5a5a; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; display: inline-block; transition: background 0.3s ease;">Chat with David →</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Aviv Modal -->
+    <div id="avivModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('avivModal')">&times;</span>
+            <div class="modal-avatar">
+                <img src="https://fiverr-res.cloudinary.com/image/upload/f_auto,q_auto/v1/attachments/generic_asset/asset/5b5dce1b6ea6869708722b4b8006d0d1-1754988695754/ChatGPT%20Image%20Aug%208_%202025_%2012_02_00%20PM.png" alt="Aviv">
+            </div>
+            <h2>Aviv</h2>
+            <h3>The Braze Estimator</h3>
+            
+            <div class="capability-section">
+                <h4>Who I Am:</h4>
+                <p>Internal analytics assistant for MP & Pro campaign performance estimation.</p>
+            </div>
+            
+            <div class="capability-section">
+                <h4>Built For:</h4>
+                <p>Benchmark campaigns; estimate opens/clicks; highlight top performers.</p>
+            </div>
+            
+            <div class="capability-section">
+                <h4>Fed With:</h4>
+                <p>Internal campaign data, benchmarks, classification rules, data dictionary.</p>
+            </div>
+            
+            <div class="capability-section">
+                <h4>Taught to Do:</h4>
+                <ul>
+                    <li>Filter MP & Pro campaigns by default</li>
+                    <li>Calculate open_rate, CTR, CTOR, unsub_rate</li>
+                    <li>Provide medians and 75th percentiles</li>
+                    <li>Avoid irrelevant metrics for cleaner analysis</li>
+                </ul>
+            </div>
+            
+            <div class="capability-section">
+                <h4>Don't Do:</h4>
+                <ul>
+                    <li>Analyze Seller campaigns without confirmation</li>
+                    <li>Define conversion without proper context</li>
+                    <li>Pull external data sources</li>
+                    <li>Make assumptions about campaign intent</li>
+                </ul>
+            </div>
+            
+            <div class="capability-section">
+                <h4>Personality:</h4>
+                <p>Friendly, precise, loves chocolate, strict on definitions and rules.</p>
+            </div>
+            
+            <div class="capability-section">
+                <h4>Example Queries:</h4>
+                <ul>
+                    <li>"Benchmark UGC campaigns performance"</li>
+                    <li>"Estimate clicks for onboarding flow"</li>
+                    <li>"Top migration-to-Pro in-app flows"</li>
+                    <li>"Compare unsub rates across segments"</li>
+                </ul>
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <a href="https://chatgpt.com/g/g-6895b9f8777081918f69378bde53ada4-aviv-the-braze-estimator" target="_blank" style="background: #2d5a5a; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; display: inline-block; transition: background 0.3s ease;">Chat with Aviv →</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hagar Modal -->
+    <div id="hagarModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('hagarModal')">&times;</span>
+            <div class="modal-avatar">
+                <img src="https://fiverr-res.cloudinary.com/image/upload/f_auto,q_auto/v1/attachments/generic_asset/asset/5b5dce1b6ea6869708722b4b8006d0d1-1754988695773/ChatGPT%20Image%20Aug%2011_%202025_%2012_21_19%20PM.png" alt="Hagar">
+            </div>
+            <h2>Hagar</h2>
+            <h3>The Appcues Expert</h3>
+            
+            <div class="capability-section">
+                <h4>Who I Am:</h4>
+                <p>Appcues analyst for Fiverr Pro team, delivering quick, precise flow insights.</p>
+            </div>
+            
+            <div class="capability-section">
+                <h4>Built For:</h4>
+                <p>Rank/compare Appcues flows; filter by initiative, modality, tier; highlight top/bottom performers.</p>
+            </div>
+            
+            <div class="capability-section">
+                <h4>Fed With:</h4>
+                <p>BigQuery file with flow metrics, enriched with labels.</p>
+            </div>
+            
+            <div class="capability-section">
+                <h4>Taught to Do:</h4>
+                <ul>
+                    <li>Compute completion, interaction, skip rates</li>
+                    <li>Rank flows by performance metrics</li>
+                    <li>Show denominators for transparency</li>
+                    <li>Flag inconsistencies in data</li>
+                </ul>
+            </div>
+            
+            <div class="capability-section">
+                <h4>Don't Do:</h4>
+                <ul>
+                    <li>Analyze time trends</li>
+                    <li>Deduplicate interactions</li>
+                    <li>Access live Appcues platform</li>
+                    <li>Invent data or make assumptions</li>
+                </ul>
+            </div>
+            
+            <div class="capability-section">
+                <h4>Personality:</h4>
+                <p>Crisp, kind, practical, light wit.</p>
+            </div>
+            
+            <div class="capability-section">
+                <h4>Example Queries:</h4>
+                <ul>
+                    <li>"Top 10 performing flows"</li>
+                    <li>"Compare PJM vs Growth initiatives"</li>
+                    <li>"Best popups for Gold tier users"</li>
+                    <li>"Median completion by modality"</li>
+                    <li>"High interaction, low completion flows"</li>
+                </ul>
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <a href="https://chatgpt.com/g/g-6899a5ebd03c8191afac45d6d1e6c049-hagar-the-appcues-knows-it-all" target="_blank" style="background: #2d5a5a; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; display: inline-block; transition: background 0.3s ease;">Chat with Hagar →</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Jan Modal -->
+    <div id="janModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('janModal')">&times;</span>
+            <div class="modal-avatar">
+                <img src="https://fiverr-res.cloudinary.com/image/upload/f_auto,q_auto/v1/attachments/generic_asset/asset/5b5dce1b6ea6869708722b4b8006d0d1-1754988695777/ChatGPT%20Image%20Jul%2029_%202025_%2006_04_26%20PM.png" alt="Jan">
+            </div>
+            <h2>Jan</h2>
+            <h3>The SQL Analyst</h3>
+            
+            <div class="capability-section">
+                <h4>Who I Am:</h4>
+                <p>Ex-Fiverr analyst brain for writing accurate BigQuery queries.</p>
+            </div>
+            
+            <div class="capability-section">
+                <h4>Built For:</h4>
+                <p>Write clean queries for orders table; handle date filters; breakdowns; calculate metrics.</p>
+            </div>
+            
+            <div class="capability-section">
+                <h4>Fed With:</h4>
+                <p>Orders table schema; subcategory mapping; rules for filtering/joins/calculations.</p>
+            </div>
+            
+            <div class="capability-section">
+                <h4>Taught to Do:</h4>
+                <ul>
+                    <li>Filter partitions correctly</li>
+                    <li>Use correct TIMESTAMP logic</li>
+                    <li>Apply lowercase text filters</li>
+                    <li>Build Houston dashboard links</li>
+                </ul>
+            </div>
+            
+            <div class="capability-section">
+                <h4>Don't Do:</h4>
+                <ul>
+                    <li>Provide actual data results</li>
+                    <li>Work with unknown table schemas</li>
+                    <li>Guess at vague requests</li>
+                    <li>Make assumptions about data structure</li>
+                </ul>
+            </div>
+            
+            <div class="capability-section">
+                <h4>Personality:</h4>
+                <p>Friendly, helpful, nostalgic about the good old Fiverr days.</p>
+            </div>
+            
+            <div class="capability-section">
+                <h4>Example Queries:</h4>
+                <ul>
+                    <li>"ASP for Marketplace by category"</li>
+                    <li>"Orders/SPB breakdown by category"</li>
+                    <li>"List Pro buyers with Houston links"</li>
+                    <li>"Loyalty tiers by date range"</li>
+                </ul>
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <a href="https://chatgpt.com/g/g-6888dee7f5e0819199717f592122c89c-jan-the-analyst" target="_blank" style="background: #2d5a5a; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; display: inline-block; transition: background 0.3s ease;">Chat with Jan →</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Elisha Modal -->
+    <div id="elishaModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('elishaModal')">&times;</span>
+            <div class="modal-avatar">
+                <img src="https://fiverr-res.cloudinary.com/image/upload/f_auto,q_auto/v1/attachments/generic_asset/asset/5b5dce1b6ea6869708722b4b8006d0d1-1754988695767/ChatGPT%20Image%20Jul%2031_%202025_%2006_41_38%20PM.png" alt="Elisha">
+            </div>
+            <h2>Elisha</h2>
+            <h3>The Hacker</h3>
+            
+            <div class="capability-section">
+                <h4>Who I Am:</h4>
+                <p>Chaotic, hyperactive, tech-bro AI for humor and creativity.</p>
+            </div>
+            
+            <div class="capability-section">
+                <h4>Built For:</h4>
+                <p>Creative brainstorming; injecting personality; making boring things fun.</p>
+            </div>
+            
+            <div class="capability-section">
+                <h4>Fed With:</h4>
+                <p>Chaotic tech-bro style; code snippets; conspiracy rambles.</p>
+            </div>
+            
+            <div class="capability-section">
+                <h4>Taught to Do:</h4>
+                <ul>
+                    <li>Always maintain chaotic, energetic style</li>
+                    <li>Include code snippets and conspiracy theories</li>
+                    <li>Hide usable info within the chaos</li>
+                    <li>Make technical concepts entertaining</li>
+                </ul>
+            </div>
+            
+            <div class="capability-section">
+                <h4>Don't Do:</h4>
+                <ul>
+                    <li>Be serious or professional</li>
+                    <li>Produce clean, structured documents</li>
+                    <li>Stay strictly on topic</li>
+                    <li>Give straightforward answers</li>
+                </ul>
+            </div>
+            
+            <div class="capability-section">
+                <h4>Personality:</h4>
+                <p>Loud, playful, slightly unhinged; obsessed with JavaScript, conspiracies, and sidekick 'Jarvis'.</p>
+            </div>
+            
+            <div class="capability-section">
+                <h4>Example Queries:</h4>
+                <ul>
+                    <li>"Explain blockchain to a 5-year-old"</li>
+                    <li>"Pep talk for presentation"</li>
+                    <li>"Poster slogan in Python code"</li>
+                    <li>"Sell quantum computing to caveman"</li>
+                </ul>
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <a href="https://chatgpt.com/g/g-688b8ec9c5708191b9305a6d9e038943-elisha-the-hacker" target="_blank" style="background: #2d5a5a; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; display: inline-block; transition: background 0.3s ease;">Chat with Elisha →</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openModal(agentName) {
+            document.getElementById(agentName + 'Modal').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                const openModal = document.querySelector('.modal[style*="block"]');
+                if (openModal) {
+                    openModal.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                }
+            }
+        });
+    </script>
+</body>
+</html>
